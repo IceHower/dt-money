@@ -3,6 +3,8 @@ import { Header } from "./components/Header";
 import { NewTransactionModal } from './components/NewTransactionModal';
 import Modal from 'react-modal';
 import { useState } from "react";
+import { TransactionsProvider } from './hooks/useTransactions';
+
 Modal.setAppElement('#root'); // Para questoes de acessibilidade  definimos para o componente do react-modal aonde nossa aplicação esta sendo executada.
 export function App() {
 
@@ -16,14 +18,13 @@ export function App() {
       setIsNewTransactionModalOpen(false);
   }
   return (
-    <>
+    <TransactionsProvider>
        <Header onOpenNewTransaction={handleOpenNewTransactionModal}/>
        <NewTransactionModal 
         isOpen={isNewTransactionModalOpen} 
         onRequestClose={handleCloseNewTransactionModal} 
        />
        <Dashboard/>
-      
-    </>
+    </TransactionsProvider>
   );
 }

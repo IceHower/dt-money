@@ -4,13 +4,15 @@ import closeImg from '../../assets/close.svg';
 import entradaImg from '../../assets/entradas.svg';
 import saidaImg from '../../assets/saidas.svg';
 import { FormEvent, useState } from 'react';
-import { api } from '../../services/api';
+import { useTransactions } from '../../hooks/useTransactions';
 
 interface NewTransactionModalProps{
     isOpen: boolean;
     onRequestClose: () => void;
 }
 export function NewTransactionModal({isOpen, onRequestClose}: NewTransactionModalProps) {
+    const { createTransaction } = useTransactions();
+    
     const [type, setType] = useState('deposit');
 
     //estados dos inputs
@@ -18,17 +20,28 @@ export function NewTransactionModal({isOpen, onRequestClose}: NewTransactionModa
     const [value, setValue] = useState(0);
     const [category, setCategory] = useState('');
 
-    function handleCreateNewTransaction(event: FormEvent) {
-        event.preventDefault();
 
-        const data = {
-            title,
-            value, 
-            category,
-            type
-        }
-        api.post('/transactions', data)
+    function cleanStates() {
+        setTitle('');
+        setValue(0);
+        setCategory('');
+        setType('deposit');
     }
+    async function handleCreateNewTransaction(event: FormEvent) {
+        event.preventDefault();
+        const transaction = {
+            title,
+            value,
+            type,
+            category
+        }
+        await createTransaction(transaction);
+
+        onRequestClose();
+        cleanStates();
+    }
+
+
 
     return(
             <Modal 
